@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -7,7 +8,7 @@ from django.urls import reverse
 from .models import User
 
 
-def index(request):
+def index(request): #displays all posts, allows user to create post if authenticated
     return render(request, "network/index.html")
 
 
