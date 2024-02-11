@@ -12,6 +12,9 @@ class Post(models.Model):
     created = models.DateTimeField(auto_now=True)
     updated = models.DateTimeField(auto_now=True)
 
+    def __str__(self) -> str:
+        return f"{self.creator} created {self.content}"
+
     class Meta:
         ordering = ["-created"]
 
@@ -25,3 +28,6 @@ class SocialSystem(models.Model):
             models.UniqueConstraint(fields=['user_id','following_user_id'],  name="unique_followers")
         ]
         ordering = ['-created']
+
+    def __str__(self) -> str:
+        return f"{self.user} followed {self.following_user}"

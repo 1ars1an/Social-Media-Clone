@@ -2,15 +2,37 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from django.views import View
 
-from .models import User
+from .models import User, Post
+from .forms import CreatePost
 
+class Index(View): #displays all posts, allows user to create post if authenticated
+    def get(self, request):
+        all_posts = Post.objects.all()
+        return render(request, "network/index.html", {'posts': all_posts, 'form': CreatePost()})
 
-def index(request): #displays all posts, allows user to create post if authenticated
-    return render(request, "network/index.html")
+    def post(self, request):
+        form = CreatePost(request.POST)
+        all_posts = Post.objects.all()
+        if form.is_valid():
+            content = form.cleaned_data['content']
+            user_post = Post(creator=request.user, content=content)
+            user_post.save()
+            return redirect(reverse('index'))
+        else:
+            print(form.errors)
+            return render(request, "network/index.html", {'posts': all_posts, 'form': CreatePost(), 'message': form.errors})
 
+class ProfilePage(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        user = get_object_or_404(User, id=pk)
+        posts = user.posts.all()
+        context = {'user': user, 'posts': posts}
+        return render(request, "network/profile.html", context)
 
 def login_view(request):
     if request.method == "POST":

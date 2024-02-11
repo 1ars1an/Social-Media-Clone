@@ -1,22 +1,10 @@
 {% extends "network/layout.html" %}
 
 {% block title %}
-    Home
+    {{user}}
 {% endblock %}
 
 {% block body %}
-    {% if user.is_authenticated %}
-        <div class="p-5 m-10 mx-auto">
-            <form action="{% url 'index' %}" method='post'>
-            {% csrf_token %}
-            {{form.as_p}}
-            {% if message %}
-                {{message.content}}
-            {% endif %}
-            <input class="btn btn-outline-success btn-large my-2" type='submit' value='Submit'>
-            </form>
-        </div>    
-    {% endif %}
     {% for post in posts %}
         <div class="card text-center border-dark mx-auto m-5" style="width: 60rem;">
             <div class="card-body">
