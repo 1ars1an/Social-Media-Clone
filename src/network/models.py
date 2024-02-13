@@ -8,7 +8,6 @@ class User(AbstractUser):
 class Post(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     content = models.CharField(max_length = 180)
-    likes = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -31,3 +30,15 @@ class SocialSystem(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user} followed {self.following_user}"
+    
+class LikeSystem(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="liked")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="p_status")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user_id','post_id'],  name="unique_likes")
+        ]
+
+    def __str__(self) -> str:
+            return f"{self.user} liked {self.post}"
